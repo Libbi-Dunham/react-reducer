@@ -1,11 +1,30 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useReducer } from 'react'
 
 const pinkRGB = `rgb(236, 72, 153)`
+
+const initialCounters = []
+
+function countersReducer(counters, action) {
+  switch (action.type) {
+    case 'increment': {
+      return (prevState) => prevState + 1
+    }
+    case 'decrement': {
+      return (prevState) => prevState - 1
+    }
+    case 'reset': {
+      initialCounters(action.payload)
+    }
+    default: {
+      throw Error(`unknown action: ${action.type}`)
+    }
+  }
+}
 
 export default function Counter() {
   const [count, setCount] = useState(0)
   const [currentColor, setCurrentColor] = useState(pinkRGB)
-
+  const [counters, dispatch] = useReducer(countersReducer, initialCounters)
   useEffect(() => {
     if (count === 0) {
       setCurrentColor(pinkRGB)
@@ -21,15 +40,21 @@ export default function Counter() {
   }, [count])
 
   const increment = () => {
-    setCount((prevState) => prevState + 1)
+    dispatch({
+      type: 'increment',
+    })
   }
 
   const decrement = () => {
-    setCount((prevState) => prevState - 1)
+    dispatch({
+      type: 'decrement',
+    })
   }
 
   const reset = () => {
-    setCount(0)
+    dispatch({
+      type: 'reset',
+    })
   }
 
   return (
@@ -66,3 +91,33 @@ export default function Counter() {
     </main>
   )
 }
+
+// export default function Counter() {
+//   const [count, setCount] = useState(0)
+//   const [currentColor, setCurrentColor] = useState(pinkRGB)
+
+// useEffect(() => {
+//   if (count === 0) {
+//     setCurrentColor(pinkRGB)
+//   }
+
+//   if (count > 0) {
+//     setCurrentColor(`rgb(52, 211, 153)`)
+//   }
+
+//   if (count < 0) {
+//     setCurrentColor(`rgb(239, 68, 68)`)
+//   }
+// }, [count])
+
+// const increment = () => {
+//   setCount((prevState) => prevState + 1)
+// }
+
+// const decrement = () => {
+//   setCount((prevState) => prevState - 1)
+// }
+
+// const reset = () => {
+//   setCount(0)
+// }
